@@ -5,6 +5,10 @@ Created on Fri Oct  2 12:37:00 2020
 @author: ita-gutgaral
 """
 
+# =============================================================================
+# IMPORTAR BIBLIOTECAS
+# =============================================================================
+
 import sys
 import gdal
 import geopandas as gpd
@@ -15,7 +19,7 @@ import matplotlib as plt
 
 import rasterio
 import sqlite3
-#from sqlite3 import dbapi2 as sqlite
+
 
 from affine import Affine
 from os import listdir
@@ -24,11 +28,15 @@ from os.path import isfile, join
 # import pykrige.kriging_tools as kt
 # from pykrige.ok import OrdinaryKriging
 
-# from sqlalchemy import create_engine, event
 import shapely.wkb
 from shapely.wkt import loads, dumps
 import sklearn.metrics as metrics
 
+
+
+# =============================================================================
+# DEFINICIÓN DE LAS FUNCIONES
+# =============================================================================
 
 def world2Pixel(geoMatrix, x, y):
     
@@ -152,7 +160,7 @@ def GetImgsValueFromXYCoor(_dirImg, _lstImgNames, _gpdPtos, _geoField):
     
     return _gpdPtos
 
-
+# =============================================================================
 
 
 if __name__ == '__main__':
@@ -179,9 +187,6 @@ if __name__ == '__main__':
     # Intersecto los puntos con todas las imagenes del directorio
     gpd_ptos = GetImgsValueFromXYCoor(dirImagenes, lstImgNames, gpd_ptos, 'GEO_WKT')
     
-    gpd_ptos.columns
-    
-
 
     #
     # with sqlite3.connect(dbIn) as conn:
@@ -205,10 +210,10 @@ if __name__ == '__main__':
     rmse_SK = metrics.mean_squared_error(gpd_random_ptos['P_INTERPOLA'],gpd_random_ptos['SK_FOSFORO_CyL_250m'])
 
 
-    # plt.pyplot.scatter(gpd_random_ptos['P_INTERPOLA'], gpd_random_ptos['RF_FOSFORO_250m'], color="blue", label="original", s=0.7)
+    plt.pyplot.scatter(gpd_random_ptos['P_INTERPOLA'], gpd_random_ptos['RF_FOSFORO_250m'], color="blue", label="original", s=0.7)
     # plt.pyplot.scatter( gpd_random_ptos['RF_FOSFORO_250m'], gpd_random_ptos['RF_FOSFORO_250m']- gpd_random_ptos['P_INTERPOLA'], color="blue", label="original", s=0.7)
     
-    plt.pyplot.scatter(gpd_random_ptos['P_INTERPOLA'], gpd_random_ptos['SK_FOSFORO_CyL_250m'], color="blue", label="original", s=0.7)
+    # plt.pyplot.scatter(gpd_random_ptos['P_INTERPOLA'], gpd_random_ptos['SK_FOSFORO_CyL_250m'], color="blue", label="original", s=0.7)
     # plt.pyplot.scatter( gpd_random_ptos['SK_FOSFORO_CyL_250m'], gpd_random_ptos['SK_FOSFORO_CyL_250m']- gpd_random_ptos['P_INTERPOLA'], color="blue", label="original", s=0.7)
     
     # plt.plot(x, yhat, color="red", label="predicted")
