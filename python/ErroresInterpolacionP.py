@@ -160,6 +160,18 @@ def GetImgsValueFromXYCoor(_dirImg, _lstImgNames, _gpdPtos, _geoField):
     
     return _gpdPtos
 
+def writeTableInDb():
+
+    # with sqlite3.connect(dbIn) as conn:
+    #     conn.enable_load_extension(True)
+    #     conn.load_extension("mod_spatialite")
+    # #
+    
+    # removeColumns = ['ORIGEN', 'SEASON', 'LABORATORIO', 'MO_PORC', 'MATERIA_ORGANICA', 'ARENA_PORC', 'LIMO_PORC', 'ARCILLA_PORC', 'TEXTURA', 'pH', 'ACIDEZ_BASICIDAD','CARBONATOS_PORC','NITROGENO_PORC', 'POTASIO_PPM', 'POTASIO', 'CALCIO_PPM','MAGNESIO_PPM', 'SODIO_PPM', 'PUBLICOS', 'TEXTCALCU', 'GRUPO_TEXTURA', 'TIPO', 'P_OLSEN_PPM','P_BRAY_PPM', 'P_BRAY', 'GEO_WKT']    
+    # gpd_ptos.drop(removeColumns, axis = 1).to_sql('P_ERRORES_INTERPOLA', conn, if_exists='replace', index=False)
+    #
+
+
 # =============================================================================
 
 
@@ -188,15 +200,6 @@ if __name__ == '__main__':
     gpd_ptos = GetImgsValueFromXYCoor(dirImagenes, lstImgNames, gpd_ptos, 'GEO_WKT')
     
 
-    #
-    # with sqlite3.connect(dbIn) as conn:
-    #     conn.enable_load_extension(True)
-    #     conn.load_extension("mod_spatialite")
-    # #
-    
-    # removeColumns = ['ORIGEN', 'SEASON', 'LABORATORIO', 'MO_PORC', 'MATERIA_ORGANICA', 'ARENA_PORC', 'LIMO_PORC', 'ARCILLA_PORC', 'TEXTURA', 'pH', 'ACIDEZ_BASICIDAD','CARBONATOS_PORC','NITROGENO_PORC', 'POTASIO_PPM', 'POTASIO', 'CALCIO_PPM','MAGNESIO_PPM', 'SODIO_PPM', 'PUBLICOS', 'TEXTCALCU', 'GRUPO_TEXTURA', 'TIPO', 'P_OLSEN_PPM','P_BRAY_PPM', 'P_BRAY', 'GEO_WKT']    
-    # gpd_ptos.drop(removeColumns, axis = 1).to_sql('P_ERRORES_INTERPOLA', conn, if_exists='replace', index=False)
-    #
 
 
     gpd_random_ptos = gpd_ptos.sample(frac=0.3)
