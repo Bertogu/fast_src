@@ -20,7 +20,7 @@ set.seed(32323)
 etrs89<-"+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
 # baseDeDatos <- "/home/alberto/Dropbox/trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
-baseDeDatos <- "D:/Dropbox/trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
 
 connExp <- dbConnect(SQLite(), dbname = baseDeDatos)
 query<-"SELECT ID_MUESTRA, ORIGEN, SEASON, LABORATORIO, P_INTERPOLA, COOR_X_ETRS89, COOR_Y_ETRS89, ARCILLA, ARENA, ETP, FC_UK, GDD, KSAT_UK, LIBREHELADAS, LIMO, mde_250m, MO, pH_RASTER, PMed_ABRIL, PMed_AGOSTO, PMed_ANUAL, PMed_DICIEMBRE, PMed_ENERO, PMed_FEBRERO, PMed_INVIERNO, PMed_JUNIO, PMed_MARZO, PMed_MAYO, PMed_NOVIEMBRE, PMed_OCTUBRE, PMed_PRIMAVERA, PMed_SEPTIEMBRE, PMed_VERANO, RADIACION, Rug_250, SAT_UK, slope_250m, TIERRA_ARABLE, TMed_ABRIL, TMed_AGOSTO, TMed_DICIEMBRE, TMed_ENERO, TMed_JULIO, TMed_JUNIO, TMed_MARZO, TMed_MAYO, TMed_NOVIEMBRE, TMed_OCTUBRE, TMed_SEPTIEMBRE, TMMAX_ABRIL, TMMAX_AGOSTO, TMMAX_DICIEMBRE, TMMAX_ENERO, TMMAX_FEBRERO, TMMAX_JULIO, TMMAX_JUNIO, TMMAX_MARZO, TMMAX_MAYO, TMMAX_NOVIEMBRE, TMMAX_OCTUBRE, TMMAX_SEPTIEMBRE, WP_UK, CRAD_UK, PMed_JULIO, TMed_FEBRERO
@@ -104,7 +104,7 @@ v <- variogram(RESIDUOS~1, data = soil.data)
 x11()
 plot(v, col='Red', main='F?sforo (ppm) \nSemivariograma residuos Random forest',
      xlab='Distancia', ylab='Semivarianza')
-# No se observa correlación espacial de los residuos del modelo RF
+# No se observa correlaci?n espacial de los residuos del modelo RF
 
 
 # Cargo los datos con las localizaciones para la interpolaci?n
