@@ -199,7 +199,7 @@ if __name__ == '__main__':
     gpd_ptos['POTASIO_PPM'].describe()
     
     plt.pyplot.hist(gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<= 740.0),'POTASIO_PPM'], bin=50)
-    116518
+    
     
     gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']< 2913),'POTASIO_PPM'].describe()
     plt.show()
