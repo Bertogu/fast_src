@@ -31,7 +31,7 @@ from os.path import isfile, join
 
 import shapely.wkb
 from shapely.wkt import loads, dumps
-import sklearn.metrics as metrics
+# import sklearn.metrics as metrics
 
 
 
@@ -108,26 +108,6 @@ def FromSpatialite2GeoPandas(_dbIn, _sql, _geoField, _epsg):
     return selectedFOIs
 
 
-def fosforaInterpola (_olsen,_bray,_ph):
-    '''
-    Actualiza los valores de P en el campo que se utilizará para la interpola.
-    Si existe valor de P para ambos métodos y el ph>= 7.0 utiliza el P_Olsen
-    Sino P_bray
-    Args:
-        - _olsen: valor de P_Olsen
-        - _bray: valor de P_Bray
-        - _ph: valor de pH
-    Retruns:
-        - valor de P
-    '''
-    
-    if (_olsen !=-9999 and _bray == -9999) or (_olsen !=-9999 and _bray != -9999 and _ph >= 7.0):
-        valor=_olsen
-
-    else:
-        valor=_bray
-    
-    return valor
 
 
 def GetImgsValueFromXYCoor(_dirImg, _lstImgNames, _gpdPtos, _geoField):
@@ -162,21 +142,6 @@ def GetImgsValueFromXYCoor(_dirImg, _lstImgNames, _gpdPtos, _geoField):
     return _gpdPtos
 
 
-def writeTableInDb():
-    print('hola')
-
-
-    # with sqlite3.connect(dbIn) as conn:
-    #     conn.enable_load_extension(True)
-    #     conn.load_extension("mod_spatialite")
-    # #
-    
-    # removeColumns = ['ORIGEN', 'SEASON', 'LABORATORIO', 'MO_PORC', 'MATERIA_ORGANICA', 'ARENA_PORC', 'LIMO_PORC', 'ARCILLA_PORC', 'TEXTURA', 'pH', 'ACIDEZ_BASICIDAD','CARBONATOS_PORC','NITROGENO_PORC', 'POTASIO_PPM', 'POTASIO', 'CALCIO_PPM','MAGNESIO_PPM', 'SODIO_PPM', 'PUBLICOS', 'TEXTCALCU', 'GRUPO_TEXTURA', 'TIPO', 'P_OLSEN_PPM','P_BRAY_PPM', 'P_BRAY', 'GEO_WKT']    
-    # gpd_ptos.drop(removeColumns, axis = 1).to_sql('P_ERRORES_INTERPOLA', conn, if_exists='replace', index=False)
-    #
-
-
-
 
 # =============================================================================
 
@@ -184,22 +149,27 @@ def writeTableInDb():
 if __name__ == '__main__':
     
     
-    dbIn = 'D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite'
-    dirImagenes = 'D:/FaST_2020/Data/Raster/interpola/'
-    sqlSentence = "SELECT ID_MUESTRA, ORIGEN, SEASON, LABORATORIO, MO_PORC, MATERIA_ORGANICA, ARENA_PORC, LIMO_PORC, ARCILLA_PORC, TEXTURA, pH, ACIDEZ_BASICIDAD, CARBONATOS_PORC, NITROGENO_PORC, POTASIO_PPM, POTASIO, CALCIO_PPM, MAGNESIO_PPM, SODIO_PPM, COOR_X_ETRS89, COOR_Y_ETRS89, PUBLICOS, TEXTCALCU, GRUPO_TEXTURA, TIPO, P_OLSEN_PPM, P_BRAY_PPM, P_BRAY, ASTEXT(Geometry) AS GEO_WKT FROM PTOS_GEORREF_PARCEL_INTERPOLA"
+# =============================================================================
+    # dbIn = 'D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite'
+    # dirImagenes = 'D:/FaST_2020/Data/Raster/interpola/'
+# =============================================================================
+
+    dbIn = '/media/alberto/DATOS/Trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite'
+    dirImagenes = '/media/alberto/DATOS/Trabajo/FaST_2020/Data/Raster/'
     
+    
+    sqlSentence = "SELECT ID_MUESTRA, ORIGEN, SEASON, LABORATORIO, MO_PORC, MATERIA_ORGANICA, ARENA_PORC, LIMO_PORC, ARCILLA_PORC, TEXTURA, pH, ACIDEZ_BASICIDAD, CARBONATOS_PORC, NITROGENO_PORC, POTASIO_PPM, POTASIO, CALCIO_PPM, MAGNESIO_PPM, SODIO_PPM, COOR_X_ETRS89, COOR_Y_ETRS89, PUBLICOS, TEXTCALCU, GRUPO_TEXTURA, TIPO, P_OLSEN_PPM, P_BRAY_PPM, P_BRAY, ASTEXT(Geometry) AS GEO_WKT FROM PTOS_GEORREF_PARCEL_INTERPOLA"
     
     gpd_ptos = FromSpatialite2GeoPandas(dbIn, sqlSentence, 'GEO_WKT', "EPSG:25830")
     
     gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>0.0,'POTASIO_PPM'].describe()
-    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>0.0,'POTASIO_PPM'].quantile(0.99)
+    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>0.0,'POTASIO_PPM'].quantile([0.05, 0.15, 0.25, 0.50, 0.75, 0.90, 0.95, 0.97, 0.99])
+    len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<68.0,'POTASIO_PPM'])
     
     gpd_ptos['POTASIO_PPM'].describe()
+    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<1000),'POTASIO_PPM'].describe()
     
-    plt.pyplot.hist(gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<= 740.0),'POTASIO_PPM'], bin=50)
-    
-    
-    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']< 2913),'POTASIO_PPM'].describe()
+    plt.pyplot.hist(gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<= 1000.0),'POTASIO_PPM'], bins=100)    
     plt.show()
     
     
