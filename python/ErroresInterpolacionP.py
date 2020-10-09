@@ -160,25 +160,28 @@ def GetImgsValueFromXYCoor(_dirImg, _lstImgNames, _gpdPtos, _geoField):
     
     return _gpdPtos
 
-<<<<<<< HEAD
-# def writeTableInDb():
-def writeTableInDb():
 
+def writeTableInDb():
+    print('hola')
+
+
+    # with sqlite3.connect(dbIn) as conn:
+    #     conn.enable_load_extension(True)
+    #     conn.load_extension("mod_spatialite")
+    # #
     
-#     # removeColumns = ['ORIGEN', 'SEASON', 'LABORATORIO', 'MO_PORC', 'MATERIA_ORGANICA', 'ARENA_PORC', 'LIMO_PORC', 'ARCILLA_PORC', 'TEXTURA', 'pH', 'ACIDEZ_BASICIDAD','CARBONATOS_PORC','NITROGENO_PORC', 'POTASIO_PPM', 'POTASIO', 'CALCIO_PPM','MAGNESIO_PPM', 'SODIO_PPM', 'PUBLICOS', 'TEXTCALCU', 'GRUPO_TEXTURA', 'TIPO', 'P_OLSEN_PPM','P_BRAY_PPM', 'P_BRAY', 'GEO_WKT']    
-#     # gpd_ptos.drop(removeColumns, axis = 1).to_sql('P_ERRORES_INTERPOLA', conn, if_exists='replace', index=False)
-#     #
     # removeColumns = ['ORIGEN', 'SEASON', 'LABORATORIO', 'MO_PORC', 'MATERIA_ORGANICA', 'ARENA_PORC', 'LIMO_PORC', 'ARCILLA_PORC', 'TEXTURA', 'pH', 'ACIDEZ_BASICIDAD','CARBONATOS_PORC','NITROGENO_PORC', 'POTASIO_PPM', 'POTASIO', 'CALCIO_PPM','MAGNESIO_PPM', 'SODIO_PPM', 'PUBLICOS', 'TEXTCALCU', 'GRUPO_TEXTURA', 'TIPO', 'P_OLSEN_PPM','P_BRAY_PPM', 'P_BRAY', 'GEO_WKT']    
     # gpd_ptos.drop(removeColumns, axis = 1).to_sql('P_ERRORES_INTERPOLA', conn, if_exists='replace', index=False)
     #
 
 
-=======
->>>>>>> parent of 8deb374... Update ErroresInterpolacionP.py
+
+
 # =============================================================================
 
 
 if __name__ == '__main__':
+    
     
     dbIn = 'D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite'
     dirImagenes = 'D:/FaST_2020/Data/Raster/interpola/'
