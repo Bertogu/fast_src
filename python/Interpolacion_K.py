@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Oct  2 12:37:00 2020
+Created on Fri Oct  9 18:22:50 2020
 
-@author: ita-gutgaral
+@author: alberto
 """
 
 # =============================================================================
@@ -187,66 +188,34 @@ if __name__ == '__main__':
     dirImagenes = 'D:/FaST_2020/Data/Raster/interpola/'
     sqlSentence = "SELECT ID_MUESTRA, ORIGEN, SEASON, LABORATORIO, MO_PORC, MATERIA_ORGANICA, ARENA_PORC, LIMO_PORC, ARCILLA_PORC, TEXTURA, pH, ACIDEZ_BASICIDAD, CARBONATOS_PORC, NITROGENO_PORC, POTASIO_PPM, POTASIO, CALCIO_PPM, MAGNESIO_PPM, SODIO_PPM, COOR_X_ETRS89, COOR_Y_ETRS89, PUBLICOS, TEXTCALCU, GRUPO_TEXTURA, TIPO, P_OLSEN_PPM, P_BRAY_PPM, P_BRAY, ASTEXT(Geometry) AS GEO_WKT FROM PTOS_GEORREF_PARCEL_INTERPOLA"
     
-    campoDatoOriginal='P_OLSEN_PPM'
-    campoDatoInterpolar='P_INTERPOLA'
     
-    # Cargo los datos de las muestras en un geopandas Dataframe
     gpd_ptos = FromSpatialite2GeoPandas(dbIn, sqlSentence, 'GEO_WKT', "EPSG:25830")
     
-     
-    # Selección de las muestras que tienen algún dato de Fósforo
-    gpd_ptos = gpd_ptos[~((gpd_ptos[campoDatoOriginal]==-9999) & (gpd_ptos['P_BRAY_PPM']==-9999))]
+    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>0.0,'POTASIO_PPM'].describe()
+    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>0.0,'POTASIO_PPM'].quantile(0.99)
     
-    # Creo el campo con los valores que se utilizarán para la interpolación
-    gpd_ptos[campoDatoInterpolar] = gpd_ptos.apply(lambda x: fosforaInterpola (x[campoDatoOriginal],x['P_BRAY_PPM'],x['pH']), axis=1)  
+    gpd_ptos['POTASIO_PPM'].describe()
     
-    # Selecciono los valores que están entre los percentiles 5 y 95
-    gpd_ptos = gpd_ptos.loc[(gpd_ptos[campoDatoInterpolar]>=gpd_ptos[campoDatoInterpolar].quantile(0.05)) & (gpd_ptos[campoDatoInterpolar]<=gpd_ptos[campoDatoInterpolar].quantile(0.95)),:]    
-
-    # Leo las imagenes (tif) del directorio
-    lstImgNames = [allfiles for allfiles in [f for f in listdir(dirImagenes) if isfile(join(dirImagenes, f))] if len(allfiles.split('.')) < 3 and allfiles.split('.')[1] == 'tif']
+    plt.pyplot.hist(gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<= 740.0),'POTASIO_PPM'], bin=50)
     
-    # Intersecto los puntos con todas las imagenes del directorio
-    gpd_ptos = GetImgsValueFromXYCoor(dirImagenes, lstImgNames, gpd_ptos, 'GEO_WKT')
     
-
-    #
-    # with sqlite3.connect(dbIn) as conn:
-    #     conn.enable_load_extension(True)
-    #     conn.load_extension("mod_spatialite")
-    # #
-    
-    # removeColumns = ['ORIGEN', 'SEASON', 'LABORATORIO', 'MO_PORC', 'MATERIA_ORGANICA', 'ARENA_PORC', 'LIMO_PORC', 'ARCILLA_PORC', 'TEXTURA', 'pH', 'ACIDEZ_BASICIDAD','CARBONATOS_PORC','NITROGENO_PORC', 'POTASIO_PPM', 'POTASIO', 'CALCIO_PPM','MAGNESIO_PPM', 'SODIO_PPM', 'PUBLICOS', 'TEXTCALCU', 'GRUPO_TEXTURA', 'TIPO', 'P_OLSEN_PPM','P_BRAY_PPM', 'P_BRAY', 'GEO_WKT']    
-    # gpd_ptos.drop(removeColumns, axis = 1).to_sql('P_ERRORES_INTERPOLA', conn, if_exists='replace', index=False)
-    #
-
-
-    gpd_random_ptos = gpd_ptos.sample(frac=0.3)
-    gpd_random_ptos = gpd_random_ptos.loc[gpd_random_ptos['RF_FOSFORO_250m']>0.0,:]
-    len(gpd_random_ptos)
-    gpd_random_ptos.columns
-
-
-
-    rmse_RF = metrics.mean_squared_error(gpd_random_ptos['P_INTERPOLA'],gpd_random_ptos['RF_FOSFORO_250m'])
-    rmse_SK = metrics.mean_squared_error(gpd_random_ptos['P_INTERPOLA'],gpd_random_ptos['SK_FOSFORO_CyL_250m'])
-
-
-    plt.pyplot.scatter(gpd_random_ptos['P_INTERPOLA'], gpd_random_ptos['RF_FOSFORO_250m'], color="blue", label="original", s=0.7)
-    # plt.pyplot.scatter( gpd_random_ptos['RF_FOSFORO_250m'], gpd_random_ptos['RF_FOSFORO_250m']- gpd_random_ptos['P_INTERPOLA'], color="blue", label="original", s=0.7)
-    
-    # plt.pyplot.scatter(gpd_random_ptos['P_INTERPOLA'], gpd_random_ptos['SK_FOSFORO_CyL_250m'], color="blue", label="original", s=0.7)
-    # plt.pyplot.scatter( gpd_random_ptos['SK_FOSFORO_CyL_250m'], gpd_random_ptos['SK_FOSFORO_CyL_250m']- gpd_random_ptos['P_INTERPOLA'], color="blue", label="original", s=0.7)
-    
-    # plt.plot(x, yhat, color="red", label="predicted")
-    plt.legend()
+    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']< 2913),'POTASIO_PPM'].describe()
     plt.show()
-
-
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
