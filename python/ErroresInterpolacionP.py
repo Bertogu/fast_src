@@ -183,6 +183,21 @@ if __name__ == '__main__':
     
     # Cargo los datos de las muestras en un geopandas Dataframe
     gpd_ptos = FromSpatialite2GeoPandas(dbIn, sqlSentence, 'GEO_WKT', "EPSG:25830")
+    
+    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>0.0,'POTASIO_PPM'].describe()
+    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>0.0,'POTASIO_PPM'].quantile(0.99)
+    
+    gpd_ptos['POTASIO_PPM'].describe()
+    
+    plt.pyplot.hist(gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<= 740.0),'POTASIO_PPM'], bin=50)
+    116518
+    
+    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']< 2913),'POTASIO_PPM'].describe()
+    plt.show()
+    
+    
+    
+    
      
     # Selección de las muestras que tienen algún dato de Fósforo
     gpd_ptos = gpd_ptos[~((gpd_ptos['P_OLSEN_PPM']==-9999) & (gpd_ptos['P_BRAY_PPM']==-9999))]
