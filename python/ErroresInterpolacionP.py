@@ -184,6 +184,9 @@ if __name__ == '__main__':
     dirImagenes = 'D:/FaST_2020/Data/Raster/interpola/'
     sqlSentence = "SELECT ID_MUESTRA, ORIGEN, SEASON, LABORATORIO, MO_PORC, MATERIA_ORGANICA, ARENA_PORC, LIMO_PORC, ARCILLA_PORC, TEXTURA, pH, ACIDEZ_BASICIDAD, CARBONATOS_PORC, NITROGENO_PORC, POTASIO_PPM, POTASIO, CALCIO_PPM, MAGNESIO_PPM, SODIO_PPM, COOR_X_ETRS89, COOR_Y_ETRS89, PUBLICOS, TEXTCALCU, GRUPO_TEXTURA, TIPO, P_OLSEN_PPM, P_BRAY_PPM, P_BRAY, ASTEXT(Geometry) AS GEO_WKT FROM PTOS_GEORREF_PARCEL_INTERPOLA"
     
+    campoDatoOriginal='P_OLSEN_PPM'
+    campoDatoInterpolar='P_INTERPOLA'
+    
     # Cargo los datos de las muestras en un geopandas Dataframe
     gpd_ptos = FromSpatialite2GeoPandas(dbIn, sqlSentence, 'GEO_WKT', "EPSG:25830")
     
@@ -203,13 +206,13 @@ if __name__ == '__main__':
     
      
     # Selección de las muestras que tienen algún dato de Fósforo
-    gpd_ptos = gpd_ptos[~((gpd_ptos['P_OLSEN_PPM']==-9999) & (gpd_ptos['P_BRAY_PPM']==-9999))]
+    gpd_ptos = gpd_ptos[~((gpd_ptos[campoDatoOriginal]==-9999) & (gpd_ptos['P_BRAY_PPM']==-9999))]
     
     # Creo el campo con los valores que se utilizarán para la interpolación
-    gpd_ptos['P_INTERPOLA'] = gpd_ptos.apply(lambda x: fosforaInterpola (x['P_OLSEN_PPM'],x['P_BRAY_PPM'],x['pH']), axis=1)  
+    gpd_ptos[campoDatoInterpolar] = gpd_ptos.apply(lambda x: fosforaInterpola (x[campoDatoOriginal],x['P_BRAY_PPM'],x['pH']), axis=1)  
     
     # Selecciono los valores que están entre los percentiles 5 y 95
-    gpd_ptos = gpd_ptos.loc[(gpd_ptos['P_INTERPOLA']>=gpd_ptos['P_INTERPOLA'].quantile(0.05)) & (gpd_ptos['P_INTERPOLA']<=gpd_ptos['P_INTERPOLA'].quantile(0.95)),:]    
+    gpd_ptos = gpd_ptos.loc[(gpd_ptos[campoDatoInterpolar]>=gpd_ptos[campoDatoInterpolar].quantile(0.05)) & (gpd_ptos[campoDatoInterpolar]<=gpd_ptos[campoDatoInterpolar].quantile(0.95)),:]    
 
     # Leo las imagenes (tif) del directorio
     lstImgNames = [allfiles for allfiles in [f for f in listdir(dirImagenes) if isfile(join(dirImagenes, f))] if len(allfiles.split('.')) < 3 and allfiles.split('.')[1] == 'tif']
