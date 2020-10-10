@@ -167,9 +167,27 @@ if __name__ == '__main__':
     len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<68.0,'POTASIO_PPM'])
     
     gpd_ptos['POTASIO_PPM'].describe()
-    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<1000),'POTASIO_PPM'].describe()
     
-    plt.pyplot.hist(gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<= 1000.0),'POTASIO_PPM'], bins=100)    
+    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<116518.0),'POTASIO_PPM'].describe()
+    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<116518.0),'POTASIO_PPM'].quantile([0.05, 0.15, 0.25, 0.50, 0.75, 0.90, 0.95, 0.97, 0.99])
+
+# =============================================================================
+# según las tablas:
+#     * SECANO:
+#         - Muy bajo < 41.5
+#         - Muy alto >=273.9
+#     * REGADIO:
+#         - Muy bajo < 49.8
+#         - muy alto >= 290.5
+# =============================================================================
+    
+    len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<41.5,'POTASIO_PPM'])
+    len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>=290.5,'POTASIO_PPM'])
+    
+    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>=290.5) & (gpd_ptos['POTASIO_PPM']<900.0),'POTASIO_PPM'].describe()
+    
+    
+    plt.pyplot.hist(gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>=290.5) & (gpd_ptos['POTASIO_PPM']< 900.0),'POTASIO_PPM'], bins=100)    
     plt.show()
     
     
