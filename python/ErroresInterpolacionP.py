@@ -30,7 +30,7 @@ from os.path import isfile, join
 
 import shapely.wkb
 from shapely.wkt import loads, dumps
-import sklearn.metrics as metrics
+# import sklearn.metrics as metrics
 
 
 
@@ -182,9 +182,14 @@ def writeTableInDb():
 
 if __name__ == '__main__':
     
+    # Windows
+    # dbIn = 'D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite'
+    # dirImagenes = 'D:/FaST_2020/Data/Raster/interpola/'
     
-    dbIn = 'D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite'
-    dirImagenes = 'D:/FaST_2020/Data/Raster/interpola/'
+    # Linux
+    dbIn = '/media/alberto/DATOS/Trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite'
+    dirImagenes = '/media/alberto/DATOS/Trabajo/FaST_2020/Data/Raster/'
+    
     sqlSentence = "SELECT ID_MUESTRA, ORIGEN, SEASON, LABORATORIO, MO_PORC, MATERIA_ORGANICA, ARENA_PORC, LIMO_PORC, ARCILLA_PORC, TEXTURA, pH, ACIDEZ_BASICIDAD, CARBONATOS_PORC, NITROGENO_PORC, POTASIO_PPM, POTASIO, CALCIO_PPM, MAGNESIO_PPM, SODIO_PPM, COOR_X_ETRS89, COOR_Y_ETRS89, PUBLICOS, TEXTCALCU, GRUPO_TEXTURA, TIPO, P_OLSEN_PPM, P_BRAY_PPM, P_BRAY, ASTEXT(Geometry) AS GEO_WKT FROM PTOS_GEORREF_PARCEL_INTERPOLA"
     
     campoDatoOriginal='P_OLSEN_PPM'
