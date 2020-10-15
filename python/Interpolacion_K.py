@@ -205,8 +205,10 @@ if __name__ == '__main__':
     len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<49.8,'POTASIO_PPM']) 
     # Nº de muestras POTASIO_PPM >= 290.5 = 2332. Total = 11402. % = 20.45%
     len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>=290.5,'POTASIO_PPM'])
-
-
+    
+    lstImgNames = [allfiles for allfiles in [f for f in listdir(dirImagenes) if isfile(join(dirImagenes, f))] if len(allfiles.split('.')) < 3 and allfiles.split('.')[1] == 'tif']
+    gpd_ptos = GetImgsValueFromXYCoor(dirImagenes, lstImgNames, gpd_ptos, 'GEO_WKT')
+    gpd_ptos.columns
     
     plt.pyplot.hist(gpd_ptos.loc[:,'POTASIO_PPM'], bins=50, color='Red')
     plt.show()
