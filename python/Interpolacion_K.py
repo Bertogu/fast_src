@@ -162,14 +162,25 @@ if __name__ == '__main__':
     
     gpd_ptos = FromSpatialite2GeoPandas(dbIn, sqlSentence, 'GEO_WKT', "EPSG:25830")
     
-    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>0.0,'POTASIO_PPM'].describe()
-    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>0.0,'POTASIO_PPM'].quantile([0.05, 0.15, 0.25, 0.50, 0.75, 0.90, 0.95, 0.97, 0.99])
-    len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<68.0,'POTASIO_PPM'])
+    # Nº total de registros = 15813
+    len(gpd_ptos)
     
-    gpd_ptos['POTASIO_PPM'].describe()
-    
+    # Nº de muestras 0.0 < PORTASIO_PPM < 116518 -> 11449
     gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<116518.0),'POTASIO_PPM'].describe()
-    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<116518.0),'POTASIO_PPM'].quantile([0.05, 0.15, 0.25, 0.50, 0.75, 0.90, 0.95, 0.97, 0.99])
+    
+    # Eliminio los valores extremos
+    gpd_ptos = gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>0.0) & (gpd_ptos['POTASIO_PPM']<116518.0),:]
+    
+    
+    gpd_ptos.loc[:,'POTASIO_PPM'].describe() # Nº de muestras 11449.0
+    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>900.0,'POTASIO_PPM'].describe() # Nº de muestras 47 (0.41% de los datos)
+    
+    # Elimino todos las muestras con valores > de 900.0 ppm_K
+    gpd_ptos = gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<900.0,:]
+    
+    gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<900.0,'POTASIO_PPM'].describe()
+    gpd_ptos.loc[:,'POTASIO_PPM'].quantile([0.05, 0.15, 0.25, 0.50, 0.75, 0.90, 0.95, 0.97, 0.99])
+    
 
 # =============================================================================
 # según las tablas:
@@ -181,13 +192,23 @@ if __name__ == '__main__':
 #         - muy alto >= 290.5
 # =============================================================================
     
-    len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<41.5,'POTASIO_PPM'])
+    # Para secano
+    len(gpd_ptos)
+    # Nº de muestras POTASIO_PPM < 41.5 = 97. Total = 11402. % = 0.85%
+    len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<41.5,'POTASIO_PPM']) 
+    # Nº de muestras POTASIO_PPM >= 290.5 = 2661 Total = 11402. % = 23.34%
+    len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>=273.9,'POTASIO_PPM'])
+    
+    # Para Regadío
+    len(gpd_ptos)
+    # Nº de muestras POTASIO_PPM < 49.8 = 184. Total = 11402. % = 1.62%
+    len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']<49.8,'POTASIO_PPM']) 
+    # Nº de muestras POTASIO_PPM >= 290.5 = 2332. Total = 11402. % = 20.45%
     len(gpd_ptos.loc[gpd_ptos['POTASIO_PPM']>=290.5,'POTASIO_PPM'])
+
+
     
-    gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>=290.5) & (gpd_ptos['POTASIO_PPM']<900.0),'POTASIO_PPM'].describe()
-    
-    
-    plt.pyplot.hist(gpd_ptos.loc[(gpd_ptos['POTASIO_PPM']>=290.5) & (gpd_ptos['POTASIO_PPM']< 900.0),'POTASIO_PPM'], bins=100)    
+    plt.pyplot.hist(gpd_ptos.loc[:,'POTASIO_PPM'], bins=50, color='Red')
     plt.show()
     
     
