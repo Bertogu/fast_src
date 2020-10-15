@@ -81,6 +81,30 @@ def leeFoisFromSpatialite(_dbIn, _sql):
     return selectedFOIs
 
 
+
+def devuelveConexionSpatialite(_dbIn):
+    '''
+    Connect to spatialite database enabling the spatial module
+
+    Parameters
+    ----------
+    _dbIn : str
+        str with the path of the db.
+
+    Returns
+    -------
+    conexion : connection
+        the connection to the datebase.
+
+    '''
+    
+    conexion = sqlite3.connect(_dbIn)
+    conexion.enable_load_extension(True)
+    conexion.execute("SELECT load_extension('mod_spatialite')") 
+    
+    return conexion
+
+
 def FromSpatialite2GeoPandas(_dbIn, _sql, _geoField, _epsg):
     '''
     Lee una tabla geográfica de la base de datos spatialite.
@@ -208,10 +232,14 @@ if __name__ == '__main__':
     
     lstImgNames = [allfiles for allfiles in [f for f in listdir(dirImagenes) if isfile(join(dirImagenes, f))] if len(allfiles.split('.')) < 3 and allfiles.split('.')[1] == 'tif']
     gpd_ptos = GetImgsValueFromXYCoor(dirImagenes, lstImgNames, gpd_ptos, 'GEO_WKT')
-    gpd_ptos.columns
     
-    plt.pyplot.hist(gpd_ptos.loc[:,'POTASIO_PPM'], bins=50, color='Red')
-    plt.show()
+    # Convierto el campo de geometría a texto y vuelco la tabla a la db   
+    gpd_ptos['GEO_WKT']=gpd_ptos['GEO_WKT'].apply(dumps)
+    gpd_ptos.to_sql('POTASIO_SAMPLES_COVARIANTS', devuelveConexionSpatialite(dbIn), if_exists='replace', index=False)
+    
+    
+    # plt.pyplot.hist(gpd_ptos.loc[:,'POTASIO_PPM'], bins=50, color='Red')
+    # plt.show()
     
     
     
