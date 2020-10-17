@@ -79,42 +79,37 @@ proj4string(soil.data)<-CRS(etrs89)
 
 
 c = 150000
-w = 500
+w = 1500
 
 vlogK <- variogram(logK~1, data = soil.data, cutoff=c, width = w)
-# c = 125000
-# w = 3000
-# vlogP <- variogram(P_INTERPOLA~1, data = soil.data, cutoff=c, width = w)
-# vlogP <- variogram(P_INTERPOLA~1, data = soil.data)
-# x11()
+
 x11()
 plot(vlogK)
 
-n = 0.18
-p = 0.14
-r = 50000
 
-vgmLogP <- vgm(nugget = n, psill = p, range = r, model = "Sph")
+n = 0.21
+p = 0.18
+r = 77000
+
+vgmLogK <- vgm(nugget = n, psill = p, range = r, model = "Sph")
 # x11()
-plot(vlogP,vgmLogP, col = 'Red',
-     main='Semivariograma del f?sforo \n(trans. logar?tmica)',
+plot(vlogK,vgmLogK, col = 'Red',
+     main='Semivariograma del potasio \n(trans. logar?tmica)',
      xlab = 'Distancia', ylab='Semivarianza')
 
-vgFitLogP <- fit.variogram(vlogP,vgmLogP)
-attr(vgFitLogP,"SSErr")
+vgFitLogK <- fit.variogram(vlogK,vgmLogK)
+attr(vgFitLogK,"SSErr")
 
 
-logP.CV <- krige.cv(formula = logP~1, soil.data, model=vgFitLogP ,nfold=10)
+logK.CV <- krige.cv(formula = logK~1, soil.data, model=vgFitLogK ,nfold=10)
 
-logP.CV$P_PREDICT_bk <- expm1(logP.CV$var1.pred + 0.5*logP.CV$var1.var)
-logP.CV$P_INTERPOLA <- soil.data$P_INTERPOLA
-
-
+logK.CV$K_PREDICT_bk <- expm1(logK.CV$var1.pred + 0.5*logK.CV$var1.var)
+logK.CV$K_INTERPOLA <- soil.data$POTASIO_PPM
 
 
 # x11()
-plot(x=logP.CV$var1.pred, y=logP.CV$observed, col='red',
-     main='Ajuste del modelo con los datos de entrenamiento\nM?todo: Simple Kriging\n(logaritmo ppm de f?sforo)',
+plot(x=logK.CV$var1.pred, y=logK.CV$observed, col='red',
+     main='Ajuste del modelo con los datos de entrenamiento\nMétodo: Simple Kriging\n(logaritmo ppm de f?sforo)',
      xlab = 'log. ppm de f?sforo estimado', ylab='log. ppm de f?sforo observado')
 abline(c(0,1), lty=2)
 cor.test(x=logP.CV$observed, y= logP.CV$var1.pred, alternative = "two.sided", conf.level = 0.95, method = "pearson")
