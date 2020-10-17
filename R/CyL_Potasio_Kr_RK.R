@@ -16,8 +16,9 @@ set.seed(32323)
 
 etrs89<-"+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
-baseDeDatos <- "/media/alberto/DATOS/Trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
-# baseDeDatos <- "D:/Dropbox/trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+# baseDeDatos <- "/media/alberto/DATOS/Trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+
 connExp <- dbConnect(SQLite(), dbname = baseDeDatos)
 
 # query<-"SELECT ID_MUESTRA, COOR_X_ETRS89, COOR_Y_ETRS89, P_INTERPOLA, CRAD_UK, ARCILLA, ARENA, 
@@ -45,9 +46,10 @@ qqnorm(soil.data$POTASIO_PPM, col='Red',
        main = 'Q-Q plot de normalidad\npotasio(ppm)')
 qqline(soil.data$POTASIO_PPM, lty=2)
 
-
 summary(log1p(soil.data$POTASIO_PPM))
+
 soil.data$logK <- log1p(soil.data$POTASIO_PPM)
+
 # x11()
 hist(soil.data$logK, col='Lightblue',
      main = 'Histograma potasio transformado \n(logaritmo ppm)', 
@@ -94,7 +96,7 @@ r = 77000
 vgmLogK <- vgm(nugget = n, psill = p, range = r, model = "Sph")
 # x11()
 plot(vlogK,vgmLogK, col = 'Red',
-     main='Semivariograma del potasio \n(trans. logar?tmica)',
+     main='Semivariograma del potasio \n(trans. logarítmica)',
      xlab = 'Distancia', ylab='Semivarianza')
 
 vgFitLogK <- fit.variogram(vlogK,vgmLogK)
@@ -109,46 +111,48 @@ logK.CV$K_INTERPOLA <- soil.data$POTASIO_PPM
 
 # x11()
 plot(x=logK.CV$var1.pred, y=logK.CV$observed, col='red',
-     main='Ajuste del modelo con los datos de entrenamiento\nMétodo: Simple Kriging\n(logaritmo ppm de f?sforo)',
-     xlab = 'log. ppm de f?sforo estimado', ylab='log. ppm de f?sforo observado')
+     main='Ajuste del modelo con los datos de entrenamiento\nMétodo: Ordinary Kriging\n(logaritmo ppm de potasio)',
+     xlab = 'log. ppm de potasio estimado', ylab='log. ppm de potasio observado')
 abline(c(0,1), lty=2)
-cor.test(x=logP.CV$observed, y= logP.CV$var1.pred, alternative = "two.sided", conf.level = 0.95, method = "pearson")
+cor.test(x=logK.CV$observed, y= logK.CV$var1.pred, alternative = "two.sided", conf.level = 0.95, method = "pearson")
 
-r<-RMSE(obs = logP.CV$observed, pred = logP.CV$var1.pred)
+r<-RMSE(obs = logK.CV$observed, pred = logK.CV$var1.pred)
 # x11()
-plot(x=logP.CV$var1.pred, y=logP.CV$residual, col='red',
-     main='Dispersi?n de los residuos\nM?todo: Simple Kriging\n(logaritmo ppm de f?sforo)',
-     xlab='log. ppm de f?sforo estimado', ylab = 'Residuos')
+plot(x=logK.CV$var1.pred, y=logK.CV$residual, col='red',
+     main='Dispersión de los residuos\nMétodo: Ordinary Kriging\n(logaritmo ppm de potasio)',
+     xlab='log. ppm de f?potasio estimado', ylab = 'Residuos')
 abline(h=0, lty=2)
 abline(h=c(-1*r,r), col='grey', lty=2)
 
 
 
 # x11()
-plot(x=logP.CV$P_PREDICT_bk, y=logP.CV$P_INTERPOLA, col='red',
-     main='Ajuste del modelo con los datos de entrenamiento\nM?todo: Simple Kriging\n(ppm P)',
-     xlab = 'ppm de P estimado', ylab='ppm de P observado')
+plot(x=logK.CV$K_PREDICT_bk, y=logK.CV$K_INTERPOLA, col='red',
+     main='Ajuste del modelo con los datos de entrenamiento\nMétodo: Ordinary Kriging\n(ppm P)',
+     xlab = 'ppm de K estimado', ylab='ppm de K observado')
 abline(c(0,1), lty=2)
-cor.test(x=logP.CV$P_PREDICT_bk, y= logP.CV$P_INTERPOLA, alternative = "two.sided", conf.level = 0.95, method = "pearson")
+cor.test(x=logK.CV$K_PREDICT_bk, y= logK.CV$K_INTERPOLA, alternative = "two.sided", conf.level = 0.95, method = "pearson")
 
 
 
-logP.CV$Residos_bk <- logP.CV$P_INTERPOLA - logP.CV$P_PREDICT_bk
-r<-RMSE(obs = logP.CV$P_INTERPOLA, pred = logP.CV$P_PREDICT_bk)
+logK.CV$Residos_bk <- logK.CV$K_INTERPOLA - logK.CV$K_PREDICT_bk
+r<-RMSE(obs = logK.CV$K_INTERPOLA, pred = logK.CV$K_PREDICT_bk)
 # x11()
-plot(x=logP.CV$P_PREDICT_bk, y=logP.CV$Residos_bk, col='red',
-     main='Dispersi?n de los residuos\nM?todo: Simple Kriging\n(ppm de P)',
-     xlab='ppm de P estimado', ylab = 'Residuos')
+plot(x=logK.CV$K_PREDICT_bk, y=logK.CV$Residos_bk, col='red',
+     main='Dispersión de los residuos\nMétodo: Ordinary Kriging\n(ppm de K)',
+     xlab='ppm de K estimado', ylab = 'Residuos')
 abline(h=0, lty=2)
 abline(h=c(-1*r,r), col='grey', lty=2)
 r
-
+hist(logK.CV$Residos_bk)
 
 
 
 # Cargo los datos con las localizaciones para la interpolaci?n
 
-baseDeDatos <- "D:/Dropbox/trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+# baseDeDatos <- "/media/alberto/DATOS/Trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+
 connExp <- dbConnect(SQLite(), dbname = baseDeDatos)
 query<-"SELECT COOR_X_ETRS89, COOR_Y_ETRS89 FROM PTOS_INTERPOLAR"
 
@@ -167,20 +171,23 @@ coordinates(localizaciones)<- ~COOR_X_ETRS89 + COOR_Y_ETRS89
 proj4string(localizaciones)<-CRS(etrs89)
 
 
-kLogP <- krige(logP~1, locations = soil.data, newdata = localizaciones, 
-               model = vgFitLogP, debug.level = -1)
-str(kLogP)
+kLogK <- krige(logK~1, locations = soil.data, newdata = localizaciones, 
+               model = vgFitLogK, debug.level = -1)
 
-kLogP$P_PREDICT <- expm1(kLogP$var1.pred)
-kLogP$P_PREDICT_CORR <- expm1(kLogP$var1.pred + 0.5*kLogP$var1.var)
+str(kLogK)
+
+kLogK$K_PREDICT <- expm1(kLogK$var1.pred)
+kLogK$K_PREDICT_CORR <- expm1(kLogK$var1.pred + 0.5*kLogK$var1.var)
 
 str(kLogP)
-DF.kLogP <- as(kLogP, "data.frame")
-baseDeDatos <- "D:/Dropbox/trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+DF.kLogK <- as(kLogK, "data.frame")
+
+# baseDeDatos <- "/media/alberto/DATOS/Trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
 connExp <- dbConnect(SQLite(), dbname = baseDeDatos)
 
-dbWriteTable(connExp, "SK_FOSFORO_new", DF.kLogP[,c('COOR_X_ETR','COOR_Y_ETR','P_PREDICT','P_PREDICT_CORR')])
-dbWriteTable(connExp, "SK_FOSFORO_250m", DF.kLogP)
+dbWriteTable(connExp, "OK_POTASIO_new", DF.kLogk[,c('COOR_X_ETR','COOR_Y_ETR','P_PREDICT','P_PREDICT_CORR')])
+dbWriteTable(connExp, "OK_POTASIO_250m", DF.kLogk)
 dbDisconnect(connExp)
 
 
