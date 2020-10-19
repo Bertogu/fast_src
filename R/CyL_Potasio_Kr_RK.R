@@ -186,8 +186,8 @@ DF.kLogK <- as(kLogK, "data.frame")
 baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
 connExp <- dbConnect(SQLite(), dbname = baseDeDatos)
 
-dbWriteTable(connExp, "OK_POTASIO_new", DF.kLogk[,c('COOR_X_ETR','COOR_Y_ETR','P_PREDICT','P_PREDICT_CORR')])
-dbWriteTable(connExp, "OK_POTASIO_250m", DF.kLogk)
+dbWriteTable(connExp, "OK_POTASIO_new", DF.kLogK[,c('COOR_X_ETRS89','COOR_Y_ETRS89','K_PREDICT','K_PREDICT_CORR')])
+dbWriteTable(connExp, "OK_POTASIO_250m", DF.kLogK)
 dbDisconnect(connExp)
 
 
