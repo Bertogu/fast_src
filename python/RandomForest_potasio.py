@@ -111,30 +111,41 @@ if __name__ == '__main__':
     X_train = sc.fit_transform(X_train)
     X_test = sc.fit_transform(X_test)
     
-    # Define los parámetros para crear el Random forest y lo aplica a los datos
-    # de entrenamiento
+    
+# =============================================================================
+#     # Bucle para establecer el nº de árboles en randomforest
+#     # lstError = []
+#     # for i in range(2001,5201,200):
+#         
+#     #     # se prueban desde 100 árboles hasta 5001        
+#     #     start_time = time.time()
+# 
+#     #     # Define los parámetros para crear el Random forest y lo aplica a los datos
+#     #     # de entrenamiento
+#     #     regressor = RandomForestRegressor(n_estimators = i, random_state= 0)
+#     #     regressor.fit(X_train, y_train)
+#         
+#     #     # Aplico el modelo a los datos de test
+#     #     y_pred = regressor.predict(X_test)
+#         
+#         
+#     #     lstError.append((i, metrics.mean_absolute_error(y_test, y_pred), 
+#     #                       np.sqrt(metrics.mean_squared_error(y_test, y_pred)),time.time()-start_time))
+#         
+#     # dfArbolesError = pd.DataFrame.from_records(lstError, columns=['N_ARBOLES','ERROR_ABSOLUTO', 'RMSE','TIEMPO_PROCESO'])    
+# =============================================================================
     
 
-    lstError = []
-    for i in range(2001,5201,200):
-        
-        
-        start_time = time.time()
-        # Fijo los parámetros para el modelo y ajusto el modelo a los datos
-        regressor = RandomForestRegressor(n_estimators = i, random_state= 0)
-        regressor.fit(X_train, y_train)
-        
-        # Aplico el modelo a los datos de test
-        y_pred = regressor.predict(X_test)
-        
-        
-        lstError.append((i, metrics.mean_absolute_error(y_test, y_pred), 
-                          np.sqrt(metrics.mean_squared_error(y_test, y_pred)),time.time()-start_time))
-        
-    dfArbolesError = pd.DataFrame.from_records(lstError, columns=['N_ARBOLES','ERROR_ABSOLUTO', 'RMSE','TIEMPO_PROCESO'])    
+
+    # El RMSE menor se obtiene con 1500 árboles
+    # Genero el modelo con 1501 árboles
+    regressor = RandomForestRegressor(n_estimators = 1501, random_state= 0)
+    regressor.fit(X_train, y_train)
+    
+    # Aplico el modelo a los datos de test
+    y_pred = regressor.predict(X_test)
     
     
-    dfArbolesError_anterior = dfArbolesError
     
     
     
