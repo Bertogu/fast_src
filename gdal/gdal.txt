@@ -1,0 +1,32 @@
+
+
+
+
+gdal_rasterize -l SK_FOSFORO_250m -a P_PREDICT_CORR -a_nodata 0.0 -tr 250 250 -te 165000.000 4431800.000 601900.000 4789100.000 -ot float32 -of GTiff -a_srs EPSG:25830 D:\FaST_2020\Data\BD\GEO_INTERPOLACIONES.sqlite D:\FaST_2020\Data\Raster\interpola\SK_FOSFORO_250m.tif
+gdal_rasterize -l RF_FOSFORO_250m -a PREDIC_RF -a_nodata 0.0 -tr 250 250 -te 165000.000 4431800.000 601900.000 4789100.000 -ot float32 -of GTiff -a_srs EPSG:25830 D:\FaST_2020\Data\BD\GEO_INTERPOLACIONES.sqlite D:\FaST_2020\Data\Raster\interpola\RF_FOSFORO_250m.tif
+
+gdal_rasterize -l FOSFORO_PARCELAS -a P_PPM -a_srs EPSG:25830 -tr 10 10 -te 165000 4431800 601900 4789100 -of GTiff -ot float32 -a_nodata 0  D:\FaST_2020\Data\BD\PTOS_BD_Suelos_CyL.sqlite D:\FaST_2020\Data\Raster\ParaAplicacion\SIGPAC_PARCELAS_FOSFORO_10m.tif
+gdalwarp -s_srs EPSG:25830 -t_srs EPSG:25830 -tr 10.0 10.0 -te 165000.000 4431800.000 601900.000 4789100.000 -te_srs EPSG:25830 -of GTiff -ot float32 -r near -dstnodata 0.0  D:\FaST_2020\Data\Raster\interpola\SK_FOSFORO_CyL_250m.tif D:\FaST_2020\Data\Raster\ParaAplicacion\SK_FOSFORO_CyL_10m.tif
+
+gdalwarp -s_srs EPSG:25830 -t_srs EPSG:25830 -tr 10.0 10.0 -te 165000.000 4431800.000 601900.000 4789100.000 -te_srs EPSG:25830 -of GTiff -ot float32 -r near -dstnodata 0.0 D:\FaST_2020\Data\Raster\interpola\RF_FOSFORO_250m.tif D:\FaST_2020\Data\Raster\ParaAplicacion\RF_FOSFORO_CyL_10m.tif
+
+ ("RF_FOSFORO_CyL_10m@1" * "parcelas_cero@1"  )  + "SIGPAC_PARCELAS_FOSFORO_10m@1"
+
+gdalwarp -s_srs EPSG:25830 -t_srs EPSG:25830 -tr 10.0 10.0 -te 165000.000 4431800.000 601900.000 4789100.000 -of GTiff -ot Byte -r near -srcnodata 0 -dstnodata 1  D:\FaST_2020\Data\Raster\ParaAplicacion\tempo2.tif D:/FaST_2020/Data/Raster/ParaAplicacion/tempo3.tif
+
+gdal_edit -unsetnodata D:\FaST_2020\Data\Raster\ParaAplicacion\tempo3.tif
+gdal_edit -unsetnodata D:\FaST_2020\Data\Raster\ParaAplicacion\SIGPAC_PARCELAS_FOSFORO_10m.tif
+
+
+gdalinfo D:/FaST_2020/Data/Raster/ParaAplicacion/tempo2.tif
+
+gdal_translate -a_srs EPSG:25830 -a_nodata 0 -dstnodata 1 -ot Byte -of GTiff D:\FaST_2020\Data\Raster\ParaAplicacion\tempo1.tif D:/FaST_2020/Data/Raster/ParaAplicacion/tempo2.tif
+
+
+
+gdal_translate -a_srs EPSG:25830 -a_nodata 1.0 -ot Float32 -of GTiff D:\FaST_2020\Data\Raster\ParaAplicacion\tempo1.tif D:/FaST_2020/Data/Raster/ParaAplicacion/tempo3.tif
+
+
+
+gdalwarp -of GTiff -cutline D:\Cartografia_habitual\LimitesAdministraFromSIGPAC\LIMITE_CyL.shp -crop_to_cutline D:\FaST_2020\Data\Raster\interpola\SK_FOSFORO_250m.tif D:/FaST_2020/Data/Raster/interpola/SK_FOSFORO_CyL_250m.tif
+gdalwarp -s_srs EPSG:4258 -t_srs EPSG:25830 -tr 250 250 -te 165000.000 4431800.000 601900.000 4789100.000 -te_srs EPSG:25830 -tr 10.0 10.0 -dstnodata 0.0 -r near -of GTiff D:\temp\RasterizaDani\rtk_gdal_4258.tif D:/temp/RasterizaDani/rtk_qgis_4258to25830_backwards.tif
