@@ -23,8 +23,7 @@ baseDeDatos <- "/media/alberto/DATOS/Trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_Cy
 # baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
 
 connExp <- dbConnect(SQLite(), dbname = baseDeDatos)
-query<-"SELECT ID_MUESTRA, ORIGEN, SEASON, LABORATORIO, P_INTERPOLA, COOR_X_ETRS89, COOR_Y_ETRS89, ARCILLA, ARENA, ETP, FC_UK, GDD, KSAT_UK, LIBREHELADAS, LIMO, mde_250m, MO, pH_RASTER, PMed_ABRIL, PMed_AGOSTO, PMed_ANUAL, PMed_DICIEMBRE, PMed_ENERO, PMed_FEBRERO, PMed_INVIERNO, PMed_JUNIO, PMed_MARZO, PMed_MAYO, PMed_NOVIEMBRE, PMed_OCTUBRE, PMed_PRIMAVERA, PMed_SEPTIEMBRE, PMed_VERANO, RADIACION, Rug_250, SAT_UK, slope_250m, TIERRA_ARABLE, TMed_ABRIL, TMed_AGOSTO, TMed_DICIEMBRE, TMed_ENERO, TMed_JULIO, TMed_JUNIO, TMed_MARZO, TMed_MAYO, TMed_NOVIEMBRE, TMed_OCTUBRE, TMed_SEPTIEMBRE, TMMAX_ABRIL, TMMAX_AGOSTO, TMMAX_DICIEMBRE, TMMAX_ENERO, TMMAX_FEBRERO, TMMAX_JULIO, TMMAX_JUNIO, TMMAX_MARZO, TMMAX_MAYO, TMMAX_NOVIEMBRE, TMMAX_OCTUBRE, TMMAX_SEPTIEMBRE, WP_UK, CRAD_UK, PMed_JULIO, TMed_FEBRERO
-FROM FOSFORO_SAMPLES_COVARIANTS_2"
+query<-"SELECT ID_MUESTRA, POTASIO_PPM, COOR_X_ETRS89, COOR_Y_ETRS89, ARCILLA, ARENA, ETP, FC_UK, GDD, KSAT_UK, LIBREHELADAS, LIMO, mde_250m, MO, pH_RASTER, PMed_ABRIL, PMed_AGOSTO, PMed_ANUAL, PMed_DICIEMBRE, PMed_ENERO, PMed_FEBRERO, PMed_INVIERNO, PMed_JUNIO, PMed_MARZO, PMed_MAYO, PMed_NOVIEMBRE, PMed_OCTUBRE, PMed_PRIMAVERA, PMed_SEPTIEMBRE, PMed_VERANO, RADIACION, Rug_250, SAT_UK, slope_250m, TIERRA_ARABLE, TMed_ABRIL, TMed_AGOSTO, TMed_DICIEMBRE, TMed_ENERO, TMed_JULIO, TMed_JUNIO, TMed_MARZO, TMed_MAYO, TMed_NOVIEMBRE, TMed_OCTUBRE, TMed_SEPTIEMBRE, TMMAX_ABRIL, TMMAX_AGOSTO, TMMAX_DICIEMBRE, TMMAX_ENERO, TMMAX_FEBRERO, TMMAX_JULIO, TMMAX_JUNIO, TMMAX_MARZO, TMMAX_MAYO, TMMAX_NOVIEMBRE, TMMAX_OCTUBRE, TMMAX_SEPTIEMBRE, WP_UK, CRAD_UK, PMed_JULIO, TMed_FEBRERO FROM POTASIO_SAMPLES_COVARIANTS"
 
 soil.data <- as.data.frame(fetch(dbSendQuery(conn = connExp, query), n=-1))
 
@@ -32,7 +31,7 @@ dbDisconnect(connExp)
 
 nrow(soil.data)
 
-inTrain <- createDataPartition(y = soil.data$P_INTERPOLA, p = 0.8,list = FALSE)
+inTrain <- createDataPartition(y = soil.data$POTASIO_PPM, p = 0.8,list = FALSE)
 soil.data <- soil.data[inTrain,]
 soilData.test <- soil.data[-inTrain,]
 
@@ -46,12 +45,12 @@ nrow(soilData.test)
 # a$expm_1_P <- expm1(a$log_1_P)
 
 
-names(soil.data)
+length(names(soil.data))
 
-p <- soil.data[,'P_INTERPOLA']
+p <- soil.data[,'POTASIO_PPM']
 # names(soil.data[,3:53])
 ncol(soil.data)
-covariants <- soil.data[,6:65]
+covariants <- soil.data[,3:62]
 
 rf <- randomForest(x = covariants, y=p, ntree = 3001, mtry = 16, importance = TRUE)
 
