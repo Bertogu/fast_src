@@ -19,8 +19,8 @@ set.seed(32323)
 
 etrs89<-"+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
-baseDeDatos <- "/media/alberto/DATOS/Trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
-# baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+# baseDeDatos <- "/media/alberto/DATOS/Trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
+baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
 
 connExp <- dbConnect(SQLite(), dbname = baseDeDatos)
 query<-"SELECT ID_MUESTRA, POTASIO_PPM, COOR_X_ETRS89, COOR_Y_ETRS89, ARCILLA, ARENA, ETP, FC_UK, GDD, KSAT_UK, LIBREHELADAS, LIMO, mde_250m, MO, pH_RASTER, PMed_ABRIL, PMed_AGOSTO, PMed_ANUAL, PMed_DICIEMBRE, PMed_ENERO, PMed_FEBRERO, PMed_INVIERNO, PMed_JUNIO, PMed_MARZO, PMed_MAYO, PMed_NOVIEMBRE, PMed_OCTUBRE, PMed_PRIMAVERA, PMed_SEPTIEMBRE, PMed_VERANO, RADIACION, Rug_250, SAT_UK, slope_250m, TIERRA_ARABLE, TMed_ABRIL, TMed_AGOSTO, TMed_DICIEMBRE, TMed_ENERO, TMed_JULIO, TMed_JUNIO, TMed_MARZO, TMed_MAYO, TMed_NOVIEMBRE, TMed_OCTUBRE, TMed_SEPTIEMBRE, TMMAX_ABRIL, TMMAX_AGOSTO, TMMAX_DICIEMBRE, TMMAX_ENERO, TMMAX_FEBRERO, TMMAX_JULIO, TMMAX_JUNIO, TMMAX_MARZO, TMMAX_MAYO, TMMAX_NOVIEMBRE, TMMAX_OCTUBRE, TMMAX_SEPTIEMBRE, WP_UK, CRAD_UK, PMed_JULIO, TMed_FEBRERO FROM POTASIO_SAMPLES_COVARIANTS"
@@ -55,41 +55,49 @@ covariants <- soil.data[,3:62]
 rf <- randomForest(x = covariants, y=p, ntree = 3001, mtry = 16, importance = TRUE)
 
 x11()
-varImpPlot(rf, main = 'Random Forest: Importancia de las variables (ppm de P)')
+varImpPlot(rf, main = 'Random Forest: Importancia de las variables (ppm de K)')
 
 
 x11()
 plot(rf$predicted, rf$y, col='red',
-     main='Ajuste del modelo con los datos de entrenamiento\nM?todo: Random Forest\n(ppm de P)',
-     xlab = 'ppm de P estimado', ylab='ppm de P observado')
+     main='Ajuste del modelo con los datos de entrenamiento\nMétodo: Random Forest\n(ppm de K)',
+     xlab = 'ppm de K estimado', ylab='ppm de K observado')
 abline(0,1)
 cor.test(x=rf$predicted, y= rf$y, alternative = "two.sided", conf.level = 0.95, method = "pearson")
 
 rf$Residuos <- rf$y - rf$predicted
 er<-RMSE(obs = rf$y, pred = rf$predicted)
 x11()
-plot(x = rf$predicted, y = rf$Residuos, main= "Estudio de residuos\nM?todo: Random forest\n(ppm de P)",
-     col = "Red", xlab = "Valores estimados (ppm de P)", ylab = "Residuos")
+plot(x = rf$predicted, y = rf$Residuos, main= "Estudio de residuos\nMétodo: Random forest\n(ppm de K)",
+     col = "Red", xlab = "Valores estimados (ppm de K)", ylab = "Residuos")
 abline(h=0, lty=2)
 abline(h=c(-1*er,er), lty=2, col='grey')
 er
 RMSE(obs = rf$y, pred = rf$predicted)
 
+# Porcentaje de muestras que están fuera de media +/- RMSE
+sup <- length(rf$predicted[rf$predicted>mean(rf$predicted) + 111.53])
+inf <- length(rf$predicted[rf$predicted<mean(rf$predicted) - 111.53])
 
+(sup + inf)/length(rf$predicted)*100 # 15.33487 %
+
+
+
+mean(rf$predicted)
 
 # Aplica el modelo de RF a los datos de test
-summary(soil.data$Fosforo_pp)
+summary(soil.data$POTASIO_PPM)
 x11()
-hist(soil.data$P_INTERPOLA)
+hist(soil.data$POTASIO_PPM)
 
 x11()
 hist(rf$predicted)
 
-names(soilData.test[,6:65])
-p.rf <- predict(rf, newdata = soilData.test[,6:65])
+names(soilData.test[,3:62])
+p.rf <- predict(rf, newdata = soilData.test[,3:62])
 soilData.test$PREDICHO_RF <- p.rf
 
-RMSE(obs = soilData.test$P_INTERPOLA, pred = soilData.test$PREDICHO_RF)
+RMSE(obs = soilData.test$POTASIO_PPM, pred = soilData.test$PREDICHO_RF)
 
 
 # compruebo si hay correlaci?n espacial en los residuos
@@ -101,14 +109,14 @@ proj4string(soil.data)<-CRS(etrs89)
 
 v <- variogram(RESIDUOS~1, data = soil.data)
 x11()
-plot(v, col='Red', main='F?sforo (ppm) \nSemivariograma residuos Random forest',
+plot(v, col='Red', main='Potasio (ppm) \nSemivariograma residuos Random forest',
      xlab='Distancia', ylab='Semivarianza')
 # No se observa correlaci?n espacial de los residuos del modelo RF
 
 
 # Cargo los datos con las localizaciones para la interpolaci?n
 
-baseDeDatos <- "D:/Dropbox/trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL_new.sqlite"
+baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
 connExp <- dbConnect(SQLite(), dbname = baseDeDatos)
 
 query<- "SELECT * FROM LOCATION_COVARIANTS"
@@ -131,24 +139,25 @@ dbDisconnect(connExp)
 
 localizaciones[,][localizaciones[,] == -9999.000] <- NA
 localizaciones = localizaciones[complete.cases(localizaciones),]
-localizaciones[,2:61]
+names(localizaciones[,2:61])
+names(localizaciones)
 ncol(localizaciones)
 nrow(localizaciones)
 
 # names(localizaciones)[names(localizaciones) == "COOR_X_ETRS89"] <- "COOR_X_ETR"
 # names(localizaciones)[names(localizaciones) == "COOR_Y_ETRS89"] <- "COOR_Y_ETR"
 
-CyL_Fosforo.rf <- predict(rf, newdata = localizaciones[,2:61])
+CyL_Potasio.rf <- predict(rf, newdata = localizaciones[,2:61])
 
-localizaciones$PREDIC_RF <- CyL_Fosforo.rf
+localizaciones$K_PREDIC_RF <- CyL_Potasio.rf
 
-baseDeDatos <- "D:/Dropbox/trabajo/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL_new.sqlite"
+baseDeDatos <- "D:/FaST_2020/Data/BD/PTOS_BD_Suelos_CyL.sqlite"
 connExp <- dbConnect(SQLite(), dbname = baseDeDatos)
 
 names(localizaciones)
 names(covariants)
 
-dbWriteTable(connExp, "RF_COOR_FOSFORO", localizaciones[,c("ID","COOR_X_ETRS89","COOR_Y_ETRS89","PREDIC_RF")])
+dbWriteTable(connExp, "RF_COOR_FOSFORO_enR", localizaciones[,c("ID","COOR_X_ETRS89","COOR_Y_ETRS89","K_PREDIC_RF")])
 dbDisconnect(connExp)
 
 x11()
