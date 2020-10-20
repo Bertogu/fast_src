@@ -38,7 +38,35 @@ gdalwarp -of GTiff -cutline D:\Cartografia_habitual\LimitesAdministraFromSIGPAC\
 gdalwarp -of GTiff -cutline D:\Cartografia_habitual\LimitesAdministraFromSIGPAC\LIMITE_CyL.shp -crop_to_cutline D:\FaST_2020\Data\Raster\interpola\SK_POTASION_CORRG_250m.tif D:/FaST_2020/Data/Raster/interpola/SK_POTASIO_CORRG_CyL_250m.tif
 
 
+gdal_rasterize -l RF_POTASIO_250m -a K_PREDICT_RF -a_nodata 0.0 -tr 250 250 -te 165000.000 4431800.000 601900.000 4789100.000 -ot float32 -of GTiff -a_srs EPSG:25830 D:\FaST_2020\Data\BD\GEO_INTERPOLACIONES.sqlite D:\FaST_2020\Data\Raster\interpola\RF_POTASION_250m.tif
+gdalwarp -of GTiff -cutline D:\Cartografia_habitual\LimitesAdministraFromSIGPAC\LIMITE_CyL.shp -crop_to_cutline D:\FaST_2020\Data\Raster\interpola\RF_POTASION_250m.tif D:\FaST_2020\Data\Raster\interpola\RF_POTASIO_CyL_250m.tif
 
 
 gdal_rasterize -l RF_POTASIO_250m -a K_PREDICT_RF -a_nodata 0.0 -tr 250 250 -te 165000.000 4431800.000 601900.000 4789100.000 -ot float32 -of GTiff -a_srs EPSG:25830 D:\FaST_2020\Data\BD\GEO_INTERPOLACIONES.sqlite D:\FaST_2020\Data\Raster\interpola\RF_POTASION_250m.tif
 gdalwarp -of GTiff -cutline D:\Cartografia_habitual\LimitesAdministraFromSIGPAC\LIMITE_CyL.shp -crop_to_cutline D:\FaST_2020\Data\Raster\interpola\RF_POTASION_250m.tif D:\FaST_2020\Data\Raster\interpola\RF_POTASIO_CyL_250m.tif
+
+gdalwarp -s_srs EPSG:25830 -t_srs EPSG:25830 -tr 10.0 10.0 -te 165000.000 4431800.000 601900.000 4789100.000 -te_srs EPSG:25830 -of GTiff -ot float32 -r near -dstnodata 0.0 D:\FaST_2020\Data\Raster\interpola\Potasio\SK_POTASIO_CyL_250m.tif D:\FaST_2020\Data\Raster\ParaAplicacion\SK_POTASIO_CyL_10m.tif
+
+gdalwarp -s_srs EPSG:25830 -t_srs EPSG:25830 -tr 10.0 10.0 -te 165000.000 4431800.000 601900.000 4789100.000 -te_srs EPSG:25830 -of GTiff -ot float32 -r near -dstnodata 0.0 D:\FaST_2020\Data\Raster\interpola\Potasio\RF_POTASIO_CyL_250m.tif D:\FaST_2020\Data\Raster\ParaAplicacion\RF_POTASIO_CyL_10m.tif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
