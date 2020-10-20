@@ -192,7 +192,7 @@ if __name__ == '__main__':
     k_pred_CyL2db.loc[:,'K_PREDICT_RF'].describe()
     
     
-    k_pred_CyL2db.to_sql('RF_POTASIO_COOR', devuelveConexionSpatialite(dbIn), if_exists='replace', index=False)
+    k_pred_CyL2db.to_sql('RF_POTASIO_COOR_SIN_STANDARD', devuelveConexionSpatialite(dbIn), if_exists='replace', index=False)
     
 
 
