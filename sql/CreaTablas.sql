@@ -249,30 +249,217 @@ CoorY_Etrs DOUBLE,
 CodRedCont TEXT,
 Masa_Agua_ TEXT,
 TerminoMun TEXT,
-Provincia"TEXT,
+Provincia TEXT,
 NumDatosPr INTEGER,
-Parametro"TEXT,
+Parametro TEXT,
 Parametro2 TEXT,
 NITRAT_PRO DOUBLE,
 UnidadDeMe TEXT,
 LimiteCuan TEXT)
 SELECT AddGeometryColumn('PROMEDIO_NITRATOS_OUTSIDE_PARAMOS', 'Geometry', 25830, 'POINT', 'XY');
 
-
+# Los que están fuera de los paramos
 INSERT INTO PROMEDIO_NITRATOS_OUTSIDE_PARAMOS (Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry)
 SELECT Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry
 FROM PROMEDIO_NITRATOS
 WHERE CodRedCont NOT IN (
-	SELECT DISTINCT(CodRedCont)
-	FROM "PROMEDIO_NITRATOS_INSIDE_PARAMOS"
+	SELECT A.CodRedCont
+	FROM PROMEDIO_NITRATOS A, 
+	(SELECT * FROM DUERO_MASAS_SUB_SUPERIOR_CYL WHERE ID IN (400015,400019,400032,400043,400044,400029)) B
+	WHERE ST_WITHIN (A.Geometry,B.Geometry)
 )
 
 
 
-SELECT A.*, B.*
-FROM PROMEDIO_NITRATOS A, 
-(SELECT * FROM DUERO_MASAS_SUB_SUPERIOR_CYL WHERE ID IN (400015,400019,400032,400043,400044,400029)) B
-WHERE ST_WITHIN (A.Geometry,B.Geometry)
+CREATE TABLE "PROMEDIO_NITRATOS_INSIDE_PARAMO_400015" (
+Confederac TEXT,
+CoorX_Etrs DOUBLE,
+CoorY_Etrs DOUBLE,
+CodRedCont TEXT,
+Masa_Agua_ TEXT,
+TerminoMun TEXT,
+Provincia TEXT,
+NumDatosPr INTEGER,
+Parametro TEXT,
+Parametro2 TEXT,
+NITRAT_PRO DOUBLE,
+UnidadDeMe TEXT,
+LimiteCuan TEXT)
+SELECT AddGeometryColumn('PROMEDIO_NITRATOS_INSIDE_PARAMO_400015', 'Geometry', 25830, 'POINT', 'XY');
+
+
+
+INSERT INTO PROMEDIO_NITRATOS_INSIDE_PARAMO_400015 (Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry)
+SELECT Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry
+FROM PROMEDIO_NITRATOS
+WHERE CodRedCont IN (
+	SELECT A.CodRedCont
+	FROM PROMEDIO_NITRATOS A, 
+		(SELECT * FROM DUERO_MASAS_SUB_SUPERIOR_CYL WHERE ID IN (400015)) B
+	WHERE ST_WITHIN (A.Geometry,B.Geometry)
+)
+
+
+
+BEGIN TRANSACTION;
+CREATE TABLE "PROMEDIO_NITRATOS_INSIDE_PARAMO_400019" (
+Confederac TEXT,
+CoorX_Etrs DOUBLE,
+CoorY_Etrs DOUBLE,
+CodRedCont TEXT,
+Masa_Agua_ TEXT,
+TerminoMun TEXT,
+Provincia TEXT,
+NumDatosPr INTEGER,
+Parametro TEXT,
+Parametro2 TEXT,
+NITRAT_PRO DOUBLE,
+UnidadDeMe TEXT,
+LimiteCuan TEXT);
+SELECT AddGeometryColumn('PROMEDIO_NITRATOS_INSIDE_PARAMO_400019', 'Geometry', 25830, 'POINT', 'XY');
+
+INSERT INTO PROMEDIO_NITRATOS_INSIDE_PARAMO_400019 (Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry)
+SELECT Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry
+FROM PROMEDIO_NITRATOS
+WHERE CodRedCont IN (
+	SELECT A.CodRedCont
+	FROM PROMEDIO_NITRATOS A, 
+		(SELECT * FROM DUERO_MASAS_SUB_SUPERIOR_CYL WHERE ID IN (400019)) B
+	WHERE ST_WITHIN (A.Geometry,B.Geometry)
+);
+
+
+CREATE TABLE "PROMEDIO_NITRATOS_INSIDE_PARAMO_400032" (
+Confederac TEXT,
+CoorX_Etrs DOUBLE,
+CoorY_Etrs DOUBLE,
+CodRedCont TEXT,
+Masa_Agua_ TEXT,
+TerminoMun TEXT,
+Provincia TEXT,
+NumDatosPr INTEGER,
+Parametro TEXT,
+Parametro2 TEXT,
+NITRAT_PRO DOUBLE,
+UnidadDeMe TEXT,
+LimiteCuan TEXT);
+SELECT AddGeometryColumn('PROMEDIO_NITRATOS_INSIDE_PARAMO_400032', 'Geometry', 25830, 'POINT', 'XY');
+
+INSERT INTO PROMEDIO_NITRATOS_INSIDE_PARAMO_400032 (Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry)
+SELECT Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry
+FROM PROMEDIO_NITRATOS
+WHERE CodRedCont IN (
+	SELECT A.CodRedCont
+	FROM PROMEDIO_NITRATOS A, 
+		(SELECT * FROM DUERO_MASAS_SUB_SUPERIOR_CYL WHERE ID IN (400032)) B
+	WHERE ST_WITHIN (A.Geometry,B.Geometry)
+);
+
+
+CREATE TABLE "PROMEDIO_NITRATOS_INSIDE_PARAMO_400043" (
+Confederac TEXT,
+CoorX_Etrs DOUBLE,
+CoorY_Etrs DOUBLE,
+CodRedCont TEXT,
+Masa_Agua_ TEXT,
+TerminoMun TEXT,
+Provincia TEXT,
+NumDatosPr INTEGER,
+Parametro TEXT,
+Parametro2 TEXT,
+NITRAT_PRO DOUBLE,
+UnidadDeMe TEXT,
+LimiteCuan TEXT);
+SELECT AddGeometryColumn('PROMEDIO_NITRATOS_INSIDE_PARAMO_400043', 'Geometry', 25830, 'POINT', 'XY');
+
+INSERT INTO PROMEDIO_NITRATOS_INSIDE_PARAMO_400043 (Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry)
+SELECT Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry
+FROM PROMEDIO_NITRATOS
+WHERE CodRedCont IN (
+	SELECT A.CodRedCont
+	FROM PROMEDIO_NITRATOS A, 
+		(SELECT * FROM DUERO_MASAS_SUB_SUPERIOR_CYL WHERE ID IN (400043)) B
+	WHERE ST_WITHIN (A.Geometry,B.Geometry)
+);
+
+CREATE TABLE "PROMEDIO_NITRATOS_INSIDE_PARAMO_400044" (
+Confederac TEXT,
+CoorX_Etrs DOUBLE,
+CoorY_Etrs DOUBLE,
+CodRedCont TEXT,
+Masa_Agua_ TEXT,
+TerminoMun TEXT,
+Provincia TEXT,
+NumDatosPr INTEGER,
+Parametro TEXT,
+Parametro2 TEXT,
+NITRAT_PRO DOUBLE,
+UnidadDeMe TEXT,
+LimiteCuan TEXT);
+SELECT AddGeometryColumn('PROMEDIO_NITRATOS_INSIDE_PARAMO_400044', 'Geometry', 25830, 'POINT', 'XY');
+
+INSERT INTO PROMEDIO_NITRATOS_INSIDE_PARAMO_400044 (Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry)
+SELECT Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry
+FROM PROMEDIO_NITRATOS
+WHERE CodRedCont IN (
+	SELECT A.CodRedCont
+	FROM PROMEDIO_NITRATOS A, 
+		(SELECT * FROM DUERO_MASAS_SUB_SUPERIOR_CYL WHERE ID IN (400044)) B
+	WHERE ST_WITHIN (A.Geometry,B.Geometry)
+);
+
+
+CREATE TABLE "PROMEDIO_NITRATOS_INSIDE_PARAMO_400029" (
+Confederac TEXT,
+CoorX_Etrs DOUBLE,
+CoorY_Etrs DOUBLE,
+CodRedCont TEXT,
+Masa_Agua_ TEXT,
+TerminoMun TEXT,
+Provincia TEXT,
+NumDatosPr INTEGER,
+Parametro TEXT,
+Parametro2 TEXT,
+NITRAT_PRO DOUBLE,
+UnidadDeMe TEXT,
+LimiteCuan TEXT);
+SELECT AddGeometryColumn('PROMEDIO_NITRATOS_INSIDE_PARAMO_400029', 'Geometry', 25830, 'POINT', 'XY');
+
+INSERT INTO PROMEDIO_NITRATOS_INSIDE_PARAMO_400029 (Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry)
+SELECT Confederac,CoorX_Etrs,CoorY_Etrs,CodRedCont,Masa_Agua_,TerminoMun,Provincia,Parametro2,NITRAT_PRO,UnidadDeMe,LimiteCuan,Geometry
+FROM PROMEDIO_NITRATOS
+WHERE CodRedCont IN (
+	SELECT A.CodRedCont
+	FROM PROMEDIO_NITRATOS A, 
+		(SELECT * FROM DUERO_MASAS_SUB_SUPERIOR_CYL WHERE ID IN (400029)) B
+	WHERE ST_WITHIN (A.Geometry,B.Geometry)
+);
+COMMIT;
+
+
+
+
+CREATE TABLE VOR_NITRATOS_PARAMOS_CyL (
+CODREDCON TEXT,
+MASA_AGUA TEXT, 
+TERMINO_MUNI TEXT, 
+PROVINCIA TEXT, 
+PARAMETRO TEXT, 
+NITRATO_PRO REAL, 
+UNIDAD_MEDIDA TEXT, 
+LIMITE_CUAN TEXT, 
+)
+SELECT AddGeometryColumn('VOR_NITRATOS_PARAMOS_CyL', 'Geometry', 25830, 'MULTIPOLYGON', 'XY');
+
+INSERT INTO VOR_NITRATOS_PARAMOS_CyL (CODREDCON,MASA_AGUA, TERMINO_MUNI, PROVINCIA, PARAMETRO, NITRATO_PRO, UNIDAD_MEDIDA, LIMITE_CUAN, Geometry)
+SELECT (codredcont ,masa_agua_ ,terminomun ,provincia ,parametro2 ,nitrat_pro ,unidaddeme ,limitecuan, Geometry) FROM Vor_Nitratos_inside_paramos_Clip
+
+
+INSERT INTO VOR_NITRATOS_PARAMOS_CyL (CODREDCON,MASA_AGUA, TERMINO_MUNI, PROVINCIA, PARAMETRO, NITRATO_PRO, UNIDAD_MEDIDA, LIMITE_CUAN, Geometry)
+SELECT (codredcont ,masa_agua_ ,terminomun ,provincia ,parametro2 ,nitrat_pro ,unidaddeme ,limitecuan, Geometry) FROM Vor_Nitratos_outside_paramos_SymDiff_CyL
+
+
+
 
 
 
