@@ -8,23 +8,11 @@ WHERE tbl1.ID_MUESTRA <> tbl2.ID_MUESTRA
 ORDER BY tbl1.ID_MUESTRA
 
 
-
-
-
 SELECT tbl1.OBJECTID, tbl2.OBJECTID
 FROM your_table tbl1
 JOIN yout_table tbl2 ON tbl1.your_geometry_field.STEquals(tbl2.your_geometry_field) = 1
 WHERE tbl1.OBJECTID <> tbl2.OBJECTID
 ORDER BY tbl1.OBJECTID
-
-
-
-
-
-
-
-
-
 
 
 
